@@ -26,7 +26,7 @@ def convert_text(message):
             result = to_cyrillic(text)
         else:
             # Kirill -> Latin
-            result = translit(text, 'ru', reversed=True)
+            result = to_latin(text)
 
         bot.reply_to(message, result)
 
