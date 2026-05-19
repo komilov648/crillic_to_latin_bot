@@ -1,39 +1,30 @@
 import telebot
 import os
-
-from detect_script import detect_script
-from transliterate import to_cyrillic, to_latin
 from dotenv import load_dotenv
+from transliterate import to_cyrillic, to_latin
 
 load_dotenv()
 
 TOKEN = os.getenv("BOT_TOKEN")
-if not TOKEN:
-    raise ValueError("BOT_TOKEN topilmadi! .env faylni tekshiring.")
-bot = telebot.TeleBot(TOKEN, parse_mode=None) 
+bot = telebot.TeleBot(TOKEN, parse_mode=None)
 
 @bot.message_handler(commands=['start', 'help'])
 def send_welcome(message):
-	bot.reply_to(
-        message,
-        "Assalom alaykum! Menga lotin yoki kiril matn yuboring.\n"
-        "Lotin → Kiril yoki Kiril → Lotin ga aylantiraman."
-    )
-
-@bot.message_handler(func=lambda message: True)
+	bot.reply_to(message, "Assalom alaykum, botimizga xush kelibsiz")
+	
+@bot.message_handler(func=lambda m: True)
 def echo_all(message):
-	msg = message.text.strip()
-	script = detect_script(msg)
-
-	if script == 'latin':
-		res = to_cyrillic(msg)
-	else:	
-		res = to_latin(msg)
-	bot.reply_to(message, res)
+	# print(message)
+	text = message.text
+	if text.isascii():
+		bot.reply_to(message, to_cyrillic(text))
+	else:
+		bot.reply_to(message, to_latin(text))
 	
 bot.infinity_polling()
 
-# text = input("Enter text: ")
-# if text.isascii():
-#     print(to_cyrillic(text))
-# else:    print(to_latin(text))   
+# s = input()
+# if s.isascii():
+#     print(to_cyrillic(s))
+# else:
+#     print(to_latin(s))
